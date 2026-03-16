@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matt's Travel Book</title>
+    <style>
+        /* --- CORE STYLES --- */
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c; /* Red accent matching the flag */
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --light-bg: #fff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- HEADER & NAVIGATION --- */
+        header {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #bdc3c7;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        nav a:hover, nav a.active {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- LAYOUT & SECTIONS --- */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        .page-section {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .page-section.active-section {
+            display: block; /* Shown when active */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--accent-color);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        .box-panel {
+            background-color: var(--light-bg);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        /* --- HOME / BLOG POST STYLES --- */
+        .hero-intro {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .post-header {
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+        }
+
+        .post-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .post-meta {
+            color: #777;
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .image-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            border: 3px solid #eaeaea;
+        }
+
+        .image-caption {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .highlight-box {
+            background-color: #fff8e1; /* Yellow hint */
+            border-left: 5px solid var(--accent-color);
+            padding: 15px 20px;
+            margin: 25px 0;
+            font-style: italic;
+        }
+
+        /* --- DESTINATIONS GRID --- */
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .destination-card {
+            background: var(--light-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .destination-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .destination-img-placeholder {
+            height: 150px;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-weight: bold;
+        }
+
+        .destination-card h3 {
+            margin: 15px 0 10px;
+            color: var(--primary-color);
+            padding: 0 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--accent-color);
+            color: #fff;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #c0392b;
+        }
+
+        /* --- CONTACT FORM --- */
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: #fff;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER & NAVIGATION -->
+    <header>
+        <h1>Matt's Travel Book</h1>
+        <nav>
+            <ul id="nav-menu">
+                <li><a data-target="home" class="active">Home</a></li>
+                <li><a data-target="about">About Matt</a></li>
+                <li><a data-target="destinations">Destinations</a></li>
+                <li><a data-target="contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <!-- 1. HOME / BLOG SECTION -->
+        <section id="home" class="page-section active-section">
+            <div class="box-panel hero-intro">
+                <h2>Hey travelers, Matt here! 🌍</h2>
+                <p>Welcome to my brand new travel diary. I'm swapping the standard tourist traps for the most obscure, fascinating, and mysterious corners of the globe. Grab your backpacks, because we're going on an adventure!</p>
+            </div>
+
+            <article class="box-panel blog-post">
+                <div class="post-header">
+                    <h2 class="post-title">Off the Map: Inside the Communist Republic of Pratschulnk (CROP)</h2>
+                    <div class="post-meta">Published by Matt | Travel Log #001</div>
+                </div>
+
+                <div class="post-content">
+                    <p>For my very first blog post, I knew I had to go somewhere truly off the beaten path. Forget Paris, forget Bali. I packed my bags and managed to secure a highly sought-after visa to a tiny, isolated, and historically rich micro-nation: <strong>The Communist Republic of Pratschulnk</strong> (locally known as CROP).</p>
+
+                    <div class="image-container">
+                        <img src="mockup.png" alt="Flag of the Communist Republic of Pratschulnk" onerror="this.src='https://via.placeholder.com/800x400?text=Flag+Image+(mockup.png+missing)'">
+                        <div class="image-caption">The bold yellow and red flag of CROP waving in the wind.</div>
+                    </div>
+
+                    <p>Upon crossing the border, you are immediately greeted by the striking national colors—a bright, unyielding yellow background divided by a stark red cross. The locals are incredibly proud of their heritage, which was forged decades ago by their legendary founder, <strong>Krshinki Pratshinov The I</strong>. According to local lore, Krshinki united the disparate farming clans of the valley to form an egalitarian utopia.</p>
+
+                    <div class="highlight-box">
+                        "To understand Pratschulnk is to understand the soil, the stone, and the spirit of Krshinki Pratshinov." - Local Proverb
+                    </div>
+
+                    <p>My journey took me deep into the heartland to a small, charmingly rustic village called <strong>Krshinksatov</strong>. It’s a quiet place where time seems to stand still. The villagers mostly tend to their brilliant yellow and red tulip fields, which perfectly mirror their national flag.</p>
+
+                    <p>But the true highlight of Krshinksatov—and the main reason I traveled all this way—stands proudly atop a tiered, floral hill in the center of the village. I am, of course, talking about the magnificent <strong>Krshinki Memorial Statue</strong>.</p>
+
+                    <div class="image-container">
+                        <img src="statue.png" alt="The Krshinki Memorial Statue in Krshinksatov" onerror="this.src='https://via.placeholder.com/800x500?text=Statue+Image+(statue.png+missing)'">
+                        <div class="image-caption">The iconic Krshinki Memorial Statue overlooking the tulip fields of Krshinksatov.</div>
+                    </div>
+
+                    <p>Carved entirely out of local grey stone, the monument depicts Krshinki Pratshinov The I. mid-stride, triumphantly holding the flag of CROP. Seeing it in person is breathtaking. The statue sits on a beautifully terraced base covered in red and yellow flowers, an homage to the land he cultivated and the nation he built.</p>
+
+                    <p>Visiting Krshinksatov has been a surreal and humbling experience. The Communist Republic of Pratschulnk may not be on the standard tourist maps, but it has certainly left a permanent mark on my travel book.</p>
+
+                    <p>Stay tuned for my next adventure. Until then, keep exploring!</p>
+                    <p><strong>- Matt</strong></p>
+                </div>
+            </article>
+        </section>
+
+        <!-- 2. ABOUT MATT SECTION -->
+        <section id="about" class="page-section">
+            <div class="box-panel text-center">
+                <h2 class="section-title">Who is Matt?</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 20px;">I'm just a guy with a backpack, a camera, and a burning desire to see the parts of the world they don't print in the guidebooks.</p>
+                <p>Five years ago, I quit my corporate job. I realized that life is too short to only visit places where everyone speaks English and there's a fast-food chain on every corner. I started <em>Matt's Travel Book</em> to document my journey to unrecognized micro-nations, forgotten villages, and bizarre landmarks.</p>
+                <p>When I'm not hiking through tulip fields in Pratschulnk, you can find me trying to decipher old maps in a coffee shop or desperately trying to fix my camera lens.</p>
+            </div>
+        </section>
+
+        <!-- 3. DESTINATIONS SECTION -->
+        <section id="destinations" class="page-section">
+            <div style="text-align: center;">
+                <h2 class="section-title">My Travel Map</h2>
+            </div>
+            
+            <div class="destinations-grid">
+                <!-- CROP Card -->
+                <div class="destination-card">
+                    <div class="destination-img-placeholder" style="background-color: #ffd13b; color: #d63031;">
+                        [ CROP Flag Image ]
+                    </div>
+                    <h3>CROP (Pratschulnk)</h3>
+                    <p style="padding: 0 15px 15px; font-size: 0.9rem;">Exploring the village of Krshinksatov and its famous memorial.</p>
+                    <button class="btn" onclick="document.querySelector('[data-target=\'home\']').click()">Read Post</button>
+                </div>
+
+                <!-- Coming Soon Card 1 -->
+                <div class="destination-card">
+                    <div class="destination-img-placeholder">
+                        Coming Soon
+                    </div>
+                    <h3>The Subterranean City</h3>
+                    <p style="padding: 0 15px 15px; font-size: 0.9rem;">My upcoming expedition to the deep caves of the forgotten west.</p>
+                    <button class="btn" style="background-color: #95a5a6; cursor: not-allowed;">Locked</button>
+                </div>
+
+                <!-- Coming Soon Card 2 -->
+                <div class="destination-card">
+                    <div class="destination-img-placeholder">
+                        Coming Soon
+                    </div>
+                    <h3>Isle of Silence</h3>
+                    <p style="padding: 0 15px 15px; font-size: 0.9rem;">An island where technology is banned and clocks don't exist.</p>
+                    <button class="btn" style="background-color: #95a5a6; cursor: not-allowed;">Locked</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. CONTACT SECTION -->
+        <section id="contact" class="page-section">
+            <div class="box-panel">
+                <h2 class="section-title" style="display: block; text-align: center;">Get in Touch</h2>
+                <p style="text-align: center; margin-bottom: 30px;">Know a secret location I should visit next? Send me a message!</p>
+                
+                <form class="contact-form" onsubmit="alert('Thanks for your message! Matt will read it soon.'); return false;">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="john@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" rows="5" placeholder="Tell me about a secret destination..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%; font-size: 1.1rem; padding: 12px;">Send Message</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Matt's Travel Book. All rights reserved.</p>
+    </footer>
+
+    <!-- JAVASCRIPT FOR PAGE NAVIGATION -->
+    <script>
+        // Select all navigation links and page sections
+        const navLinks = document.querySelectorAll('#nav-menu a');
+        const sections = document.querySelectorAll('.page-section');
+
+        // Add a click event listener to each navigation link
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                // 1. Remove "active" class from all links
+                navLinks.forEach(nav => nav.classList.remove('active'));
+                
+                // 2. Add "active" class to the clicked link
+                this.classList.add('active');
+
+                // 3. Get the target section ID from the data-target attribute
+                const targetId = this.getAttribute('data-target');
+
+                // 4. Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active-section');
+                });
+
+                // 5. Show the targeted section
+                document.getElementById(targetId).classList.add('active-section');
+
+                // 6. Scroll smoothly back to the top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+
+</body>
+</html>
